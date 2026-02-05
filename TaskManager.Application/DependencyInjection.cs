@@ -1,0 +1,23 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
+using TaskManager.Application.Interfaces;
+using TaskManager.Application.Services;
+
+namespace TaskManager.Application;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+        services.AddScoped<ITaskService, TaskService>();
+        services.AddScoped<ITokenService, TokenService>();
+
+        // Register FluentValidation
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+        return services;
+    }
+}
