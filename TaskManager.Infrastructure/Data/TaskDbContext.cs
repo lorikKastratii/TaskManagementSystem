@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
+using TaskManager.Infrastructure.Identity;
 
 namespace TaskManager.Infrastructure.Data;
 
-public class TaskDbContext : DbContext
+public class TaskDbContext : IdentityDbContext<ApplicationUser>
 {
     public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
     {
@@ -23,6 +25,12 @@ public class TaskDbContext : DbContext
             entity.Property(e => e.Status).IsRequired();
             entity.Property(e => e.Priority).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.UserId).IsRequired();
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany(u => u.Tasks)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

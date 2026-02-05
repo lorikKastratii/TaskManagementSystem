@@ -12,11 +12,12 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(typeof(DependencyInjection).Assembly);
         services.AddScoped<ITaskService, TaskService>();
-        
+        services.AddScoped<ITokenService, TokenService>();
+
         // Register FluentValidation
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-        
+
         return services;
     }
 }
