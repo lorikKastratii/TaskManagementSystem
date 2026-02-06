@@ -20,7 +20,10 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskItem>> GetAllAsync()
     {
         _logger.LogDebug("Retrieving all tasks from database");
-        var tasks = await _context.Tasks.ToListAsync();
+        var tasks = await _context.Tasks
+            .Include(t => t.Status)
+            .Include(t => t.Priority)
+            .ToListAsync();
 
         _logger.LogDebug("Retrieved {Count} tasks from database", tasks.Count);
         return tasks;
@@ -29,7 +32,10 @@ public class TaskRepository : ITaskRepository
     public async Task<TaskItem?> GetByIdAsync(Guid id)
     {
         _logger.LogDebug("Retrieving task with ID: {TaskId} from database", id);
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await _context.Tasks
+            .Include(t => t.Status)
+            .Include(t => t.Priority)
+            .FirstOrDefaultAsync(t => t.Id == id);
         
         if (task == null)
         {
@@ -45,7 +51,14 @@ public class TaskRepository : ITaskRepository
         _context.Tasks.Add(task);
         await _context.SaveChangesAsync();
         _logger.LogDebug("Task {TaskId} saved to database", task.Id);
-        return task;
+        
+        // Reload with navigation properties
+        var createdTask = await _context.Tasks
+            .Include(t => t.Status)
+            .Include(t => t.Priority)
+            .FirstOrDefaultAsync(t => t.Id == task.Id);
+        
+        return createdTask ?? task;
     }
 
     public async Task<TaskItem> UpdateAsync(TaskItem task)
@@ -54,7 +67,14 @@ public class TaskRepository : ITaskRepository
         _context.Tasks.Update(task);
         await _context.SaveChangesAsync();
         _logger.LogDebug("Task {TaskId} updated in database", task.Id);
-        return task;
+        
+        // Reload with navigation properties
+        var updatedTask = await _context.Tasks
+            .Include(t => t.Status)
+            .Include(t => t.Priority)
+            .FirstOrDefaultAsync(t => t.Id == task.Id);
+        
+        return updatedTask ?? task;
     }
 
     public async Task<bool> DeleteAsync(Guid id)

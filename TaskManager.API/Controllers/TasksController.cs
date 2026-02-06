@@ -124,4 +124,28 @@ public class TasksController : ControllerBase
             return Forbid();
         }
     }
+
+    [HttpGet("statuses")]
+    public ActionResult<IEnumerable<object>> GetTaskStatuses()
+    {
+        _logger.LogInformation("GET api/tasks/statuses - Fetching task statuses");
+        var statuses = Enum.GetValues(typeof(Domain.Enums.TaskStatus))
+            .Cast<Domain.Enums.TaskStatus>()
+            .Select(s => new { id = (int)s, name = s.ToString() })
+            .ToList();
+
+        return Ok(statuses);
+    }
+
+    [HttpGet("priorities")]
+    public ActionResult<IEnumerable<object>> GetTaskPriorities()
+    {
+        _logger.LogInformation("GET api/tasks/priorities - Fetching task priorities");
+        var priorities = Enum.GetValues(typeof(Domain.Enums.TaskPriority))
+            .Cast<Domain.Enums.TaskPriority>()
+            .Select(p => new { id = (int)p, name = p.ToString() })
+            .ToList();
+
+        return Ok(priorities);
+    }
 }

@@ -1,6 +1,5 @@
 using FluentValidation;
 using TaskManager.Application.DTOs;
-using TaskManager.Domain.Enums;
 
 namespace TaskManager.Application.Validators;
 
@@ -16,11 +15,13 @@ public class UpdateTaskDtoValidator : AbstractValidator<UpdateTaskDto>
             .NotEmpty().WithMessage("Description is required")
             .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters");
 
-        RuleFor(x => x.Status)
-            .IsInEnum().WithMessage("Invalid task status");
+        RuleFor(x => x.StatusId)
+            .InclusiveBetween(0, 2).WithMessage("Status must be 0 (Todo), 1 (InProgress), or 2 (Done)")
+            .When(x => x.StatusId.HasValue);
 
-        RuleFor(x => x.Priority)
-            .IsInEnum().WithMessage("Invalid task priority");
+        RuleFor(x => x.PriorityId)
+            .InclusiveBetween(0, 2).WithMessage("Priority must be 0 (Low), 1 (Medium), or 2 (High)")
+            .When(x => x.PriorityId.HasValue);
 
         RuleFor(x => x.DueDate)
             .GreaterThan(DateTime.UtcNow).WithMessage("Due date must be in the future")
