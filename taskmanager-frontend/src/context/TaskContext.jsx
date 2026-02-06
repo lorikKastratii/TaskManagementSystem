@@ -11,7 +11,6 @@ export const TaskProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState({
-    status: '',
     priority: '',
     searchTerm: ''
   });
@@ -83,17 +82,15 @@ export const TaskProvider = ({ children }) => {
 
   const getFilteredTasks = () => {
     const filtered = tasks.filter(task => {
-      // Convert both to numbers for comparison, handle empty string
-      const filterStatusId = filter.status === '' ? null : Number(filter.status);
+      // Convert to number for comparison, handle empty string
       const filterPriorityId = filter.priority === '' ? null : Number(filter.priority);
       
-      const matchesStatus = filterStatusId === null || task.statusId === filterStatusId;
       const matchesPriority = filterPriorityId === null || task.priorityId === filterPriorityId;
       const matchesSearch = !filter.searchTerm ||
         task.title?.toLowerCase().includes(filter.searchTerm.toLowerCase()) ||
         task.description?.toLowerCase().includes(filter.searchTerm.toLowerCase());
 
-      return matchesStatus && matchesPriority && matchesSearch;
+      return matchesPriority && matchesSearch;
     });
     
     return filtered;

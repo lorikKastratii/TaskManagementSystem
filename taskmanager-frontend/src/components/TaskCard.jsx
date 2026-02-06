@@ -1,7 +1,7 @@
 import { useTasks } from '../context/TaskContext';
 import './TaskCard.css';
 
-const TaskCard = ({ task, onEdit, onDelete }) => {
+const TaskCard = ({ task, onEdit, onDelete, showStatus = true }) => {
   const { statuses, priorities } = useTasks();
 
   const getStatusName = (statusId) => {
@@ -43,14 +43,9 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
     <div className="task-card">
       <div className="task-card-header">
         <h3>{task.title}</h3>
-        <div className="task-badges">
-          <span className={`badge status-${getStatusName(task.statusId).toLowerCase()}`}>
-            {getStatusIcon(task.statusId)} {getStatusName(task.statusId)}
-          </span>
-          <span className={`badge priority-${getPriorityName(task.priorityId).toLowerCase()}`}>
-            {getPriorityIcon(task.priorityId)} {getPriorityName(task.priorityId)}
-          </span>
-        </div>
+        <span className={`badge priority-${getPriorityName(task.priorityId).toLowerCase()}`}>
+          {getPriorityIcon(task.priorityId)} {getPriorityName(task.priorityId)}
+        </span>
       </div>
 
       <p className="task-description">{task.description || 'No description'}</p>

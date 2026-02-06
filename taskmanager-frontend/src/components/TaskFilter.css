@@ -1,6 +1,7 @@
 .task-filter {
   display: flex;
   gap: 1rem;
+  align-items: center;
   margin-bottom: 2.5rem;
   padding: 1.5rem;
   background: white;
@@ -12,7 +13,7 @@
 
 .filter-group {
   flex: 1;
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .search-input,

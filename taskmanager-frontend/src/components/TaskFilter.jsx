@@ -2,14 +2,14 @@ import { useTasks } from '../context/TaskContext';
 import './TaskFilter.css';
 
 const TaskFilter = () => {
-  const { filter, setFilter, statuses, priorities } = useTasks();
+  const { filter, setFilter, priorities } = useTasks();
 
   const handleFilterChange = (field, value) => {
     setFilter({ ...filter, [field]: value });
   };
 
   const clearFilters = () => {
-    setFilter({ status: '', priority: '', searchTerm: '' });
+    setFilter({ priority: '', searchTerm: '' });
   };
 
   return (
@@ -22,21 +22,6 @@ const TaskFilter = () => {
           onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
           className="search-input"
         />
-      </div>
-
-      <div className="filter-group">
-        <select
-          value={filter.status}
-          onChange={(e) => handleFilterChange('status', e.target.value)}
-          className="filter-select"
-        >
-          <option value="">All Statuses</option>
-          {statuses.map((status) => (
-            <option key={status.id} value={status.id}>
-              {status.name}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div className="filter-group">
