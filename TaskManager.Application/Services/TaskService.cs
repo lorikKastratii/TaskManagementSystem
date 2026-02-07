@@ -50,7 +50,7 @@ public class TaskService : ITaskService
 
         var task = _mapper.Map<TaskItem>(createTaskDto);
         task.Id = Guid.NewGuid();
-        task.Status = TaskStatus.Todo;
+        task.StatusId = TaskLookupIds.TodoStatusId;
         task.IsCompleted = false;
         task.CreatedAt = DateTime.UtcNow;
         task.UserId = userId;

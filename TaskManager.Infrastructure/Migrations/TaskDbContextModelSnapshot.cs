@@ -175,11 +175,11 @@ namespace TaskManager.Infrastructure.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PriorityId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -195,9 +195,123 @@ namespace TaskManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PriorityId");
+
+                    b.HasIndex("StatusId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("TaskManager.Domain.Entities.TaskPriorityEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TaskPriorities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7218),
+                            Description = "Low priority task",
+                            DisplayOrder = 0,
+                            Name = "Low"
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7219),
+                            Description = "Medium priority task",
+                            DisplayOrder = 1,
+                            Name = "Medium"
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7220),
+                            Description = "High priority task",
+                            DisplayOrder = 2,
+                            Name = "High"
+                        });
+                });
+
+            modelBuilder.Entity("TaskManager.Domain.Entities.TaskStatusEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TaskStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7007),
+                            Description = "Task is pending and not yet started",
+                            Name = "Todo"
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7015),
+                            Description = "Task is currently being worked on",
+                            Name = "InProgress"
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            CreatedAt = new DateTime(2026, 2, 6, 14, 1, 13, 469, DateTimeKind.Utc).AddTicks(7016),
+                            Description = "Task has been completed",
+                            Name = "Done"
+                        });
                 });
 
             modelBuilder.Entity("TaskManager.Infrastructure.Identity.ApplicationUser", b =>
@@ -318,11 +432,37 @@ namespace TaskManager.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Entities.TaskItem", b =>
                 {
+                    b.HasOne("TaskManager.Domain.Entities.TaskPriorityEntity", "Priority")
+                        .WithMany("Tasks")
+                        .HasForeignKey("PriorityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TaskManager.Domain.Entities.TaskStatusEntity", "Status")
+                        .WithMany("Tasks")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("TaskManager.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany("Tasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Priority");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("TaskManager.Domain.Entities.TaskPriorityEntity", b =>
+                {
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("TaskManager.Domain.Entities.TaskStatusEntity", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("TaskManager.Infrastructure.Identity.ApplicationUser", b =>

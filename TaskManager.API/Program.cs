@@ -165,7 +165,16 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    // Only use HTTPS redirection when not running in Docker
+    if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")))
+    {
+        Log.Information("Running in container - HTTPS redirection disabled");
+    }
+    else
+    {
+        app.UseHttpsRedirection();
+    }
+
     app.UseCors("AllowAll");
     app.UseAuthentication();
     app.UseAuthorization();
