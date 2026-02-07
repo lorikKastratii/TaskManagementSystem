@@ -1,7 +1,7 @@
 import { useTasks } from '../context/TaskContext';
 import './TaskCard.css';
 
-const TaskCard = ({ task, onEdit, onDelete, showStatus = true }) => {
+const TaskCard = ({ task, onEdit, onDelete, showStatus = true, isDragging = false }) => {
   const { statuses, priorities } = useTasks();
 
   const getStatusName = (statusId) => {
@@ -40,7 +40,7 @@ const TaskCard = ({ task, onEdit, onDelete, showStatus = true }) => {
   };
 
   return (
-    <div className="task-card">
+    <div className={`task-card ${isDragging ? 'task-card-dragging' : ''}`}>
       <div className="task-card-header">
         <h3>{task.title}</h3>
         <span className={`badge priority-${getPriorityName(task.priorityId).toLowerCase()}`}>

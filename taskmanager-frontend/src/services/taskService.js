@@ -17,7 +17,9 @@ class TaskService {
   }
 
   async updateTask(id, taskData) {
+    console.log('TaskService.updateTask called with:', { id, taskData });
     const response = await api.put(`/tasks/${id}`, taskData);
+    console.log('TaskService.updateTask response:', response.data);
     return response.data;
   }
 
